@@ -18,9 +18,7 @@ def category_tab(cat: str) -> rx.Component:
 def menu_item_card(item: dict) -> rx.Component:
     return rx.el.div(
         rx.el.div(
-            rx.image(
-                src="/placeholder.svg", class_name="h-40 w-full object-cover"
-            ),
+            rx.image(src=item["image"], class_name="h-40 w-full object-cover"),
             rx.el.div(
                 item["category"],
                 class_name="absolute top-3 left-3 px-2 py-1 bg-white/90 backdrop-blur rounded-lg text-[10px] font-bold text-indigo-600",

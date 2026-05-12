@@ -15,6 +15,7 @@ class MenuItem(TypedDict):
     available: bool
     seasonal_start: str
     seasonal_end: str
+    image: str
 
 
 class MenuState(rx.State):
@@ -46,19 +47,84 @@ class MenuState(rx.State):
         if len(self.items) > 0:
             return
         sample_names = [
-            ("Classic Cheeseburger", "Burgers", 12.99),
-            ("Truffle Mushroom Burger", "Burgers", 15.5),
-            ("Spicy Zinger Chicken", "Burgers", 11.0),
-            ("Large Crispy Fries", "Sides", 4.5),
-            ("Sweet Potato Wedges", "Sides", 5.5),
-            ("Onion Rings (8pc)", "Sides", 6.0),
-            ("Classic Cola", "Drinks", 2.5),
-            ("Fresh Lemonade", "Drinks", 3.5),
-            ("Craft Root Beer", "Drinks", 4.0),
-            ("Chocolate Lava Cake", "Desserts", 7.99),
-            ("New York Cheesecake", "Desserts", 6.5),
-            ("Burger & Fries Combo", "Combos", 16.0),
-            ("Family Feast", "Combos", 45.0),
+            (
+                "Classic Cheeseburger",
+                "Burgers",
+                12.99,
+                "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=300&fit=crop",
+            ),
+            (
+                "Truffle Mushroom Burger",
+                "Burgers",
+                15.5,
+                "https://images.unsplash.com/photo-1572802419224-296b0aeee0d9?w=400&h=300&fit=crop",
+            ),
+            (
+                "Spicy Zinger Chicken",
+                "Burgers",
+                11.0,
+                "https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?w=400&h=300&fit=crop",
+            ),
+            (
+                "Large Crispy Fries",
+                "Sides",
+                4.5,
+                "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400&h=300&fit=crop",
+            ),
+            (
+                "Sweet Potato Wedges",
+                "Sides",
+                5.5,
+                "https://images.unsplash.com/photo-1629385701021-fcd568a743e8?w=400&h=300&fit=crop",
+            ),
+            (
+                "Onion Rings (8pc)",
+                "Sides",
+                6.0,
+                "https://images.unsplash.com/photo-1639024471283-03518883512d?w=400&h=300&fit=crop",
+            ),
+            (
+                "Classic Cola",
+                "Drinks",
+                2.5,
+                "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=400&h=300&fit=crop",
+            ),
+            (
+                "Fresh Lemonade",
+                "Drinks",
+                3.5,
+                "https://images.unsplash.com/photo-1621263764928-df1444c5e859?w=400&h=300&fit=crop",
+            ),
+            (
+                "Craft Root Beer",
+                "Drinks",
+                4.0,
+                "https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?w=400&h=300&fit=crop",
+            ),
+            (
+                "Chocolate Lava Cake",
+                "Desserts",
+                7.99,
+                "https://images.unsplash.com/photo-1624353365286-3f8d62daad51?w=400&h=300&fit=crop",
+            ),
+            (
+                "New York Cheesecake",
+                "Desserts",
+                6.5,
+                "https://images.unsplash.com/photo-1567327613485-fbc7bf13e4e4?w=400&h=300&fit=crop",
+            ),
+            (
+                "Burger & Fries Combo",
+                "Combos",
+                16.0,
+                "https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?w=400&h=300&fit=crop",
+            ),
+            (
+                "Family Feast",
+                "Combos",
+                45.0,
+                "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&h=300&fit=crop",
+            ),
         ]
         self.items = [
             {
@@ -71,8 +137,9 @@ class MenuState(rx.State):
                 "available": True,
                 "seasonal_start": "",
                 "seasonal_end": "",
+                "image": img_url,
             }
-            for i, (name, cat, price) in enumerate(sample_names)
+            for i, (name, cat, price, img_url) in enumerate(sample_names)
         ]
 
     @rx.var
@@ -130,6 +197,7 @@ class MenuState(rx.State):
                 available=True,
                 seasonal_start="",
                 seasonal_end="",
+                image="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop",
             )
             self.items.append(new_item)
         self.show_item_modal = False
