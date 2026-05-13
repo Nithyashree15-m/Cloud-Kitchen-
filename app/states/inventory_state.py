@@ -1,6 +1,8 @@
 import reflex as rx
 from typing import TypedDict
 import random
+import json
+import logging
 
 
 class InventoryItem(TypedDict):
@@ -15,9 +17,20 @@ class InventoryItem(TypedDict):
 
 class InventoryState(rx.State):
     items: list[InventoryItem] = []
+    inventory_storage: str = rx.LocalStorage(
+        name="cloud_kitchen_inventory", sync=True
+    )
 
     @rx.event
     def setup_inventory(self):
+        if self.inventory_storage:
+            try:
+                data = json.loads(self.inventory_storage)
+                if data:
+                    self.items = data
+                    return
+            except:
+                logging.exception("Unexpected error")
         if len(self.items) > 0:
             return
         sample_data = [
@@ -44,6 +57,7 @@ class InventoryState(rx.State):
                 sample_data
             )
         ]
+        self.inventory_storage = json.dumps(self.items)
 
     @rx.var
     def total_items(self) -> int:

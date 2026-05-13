@@ -2,6 +2,8 @@ import reflex as rx
 from typing import TypedDict
 from faker import Faker
 import random
+import json
+import logging
 
 fake = Faker()
 
@@ -19,10 +21,21 @@ class Customer(TypedDict):
 
 class CustomerState(rx.State):
     customers: list[Customer] = []
+    customer_storage: str = rx.LocalStorage(
+        name="cloud_kitchen_customers", sync=True
+    )
     search_query: str = ""
 
     @rx.event
     def setup_customers(self):
+        if self.customer_storage:
+            try:
+                data = json.loads(self.customer_storage)
+                if data:
+                    self.customers = data
+                    return
+            except:
+                logging.exception("Unexpected error")
         if len(self.customers) > 0:
             return
         self.customers = []
@@ -42,6 +55,7 @@ class CustomerState(rx.State):
                     "is_vip": orders > 20,
                 }
             )
+        self.customer_storage = json.dumps(self.customers)
 
     @rx.var
     def filtered_customers(self) -> list[Customer]:

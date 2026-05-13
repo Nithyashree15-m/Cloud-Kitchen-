@@ -2,6 +2,8 @@ import reflex as rx
 from typing import TypedDict
 from faker import Faker
 import random
+import json
+import logging
 
 fake = Faker()
 
@@ -17,6 +19,9 @@ class Invoice(TypedDict):
 
 class BillingState(rx.State):
     invoices: list[Invoice] = []
+    billing_storage: str = rx.LocalStorage(
+        name="cloud_kitchen_billing", sync=True
+    )
     channel_data: list[dict[str, str | int]] = [
         {"name": "UberEats", "value": 4500},
         {"name": "DoorDash", "value": 3800},
@@ -25,6 +30,14 @@ class BillingState(rx.State):
 
     @rx.event
     def setup_billing(self):
+        if self.billing_storage:
+            try:
+                data = json.loads(self.billing_storage)
+                if data:
+                    self.invoices = data
+                    return
+            except:
+                logging.exception("Unexpected error")
         if len(self.invoices) > 0:
             return
         statuses = ["Paid", "Paid", "Paid", "Pending", "Overdue", "Refunded"]
@@ -41,6 +54,7 @@ class BillingState(rx.State):
                     "method": random.choice(methods),
                 }
             )
+        self.billing_storage = json.dumps(self.invoices)
 
     @rx.var
     def today_revenue(self) -> float:

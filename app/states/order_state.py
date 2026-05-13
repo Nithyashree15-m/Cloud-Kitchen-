@@ -2,6 +2,8 @@ import reflex as rx
 from typing import TypedDict
 from faker import Faker
 import random
+import json
+import logging
 
 fake = Faker()
 
@@ -18,12 +20,23 @@ class Order(TypedDict):
 
 class OrderState(rx.State):
     orders: list[Order] = []
+    orders_storage: str = rx.LocalStorage(
+        name="cloud_kitchen_orders", sync=True
+    )
     status_filter: str = "All"
     search_query: str = ""
     selected_order_id: str = ""
 
     @rx.event
     def setup_sample_orders(self):
+        if self.orders_storage:
+            try:
+                data = json.loads(self.orders_storage)
+                if data:
+                    self.orders = data
+                    return
+            except:
+                logging.exception("Unexpected error")
         if len(self.orders) > 0:
             return
         channels = ["UberEats", "DoorDash", "Direct"]
@@ -41,6 +54,7 @@ class OrderState(rx.State):
                     "total": round(random.uniform(15.0, 85.0), 2),
                 }
             )
+        self.orders_storage = json.dumps(self.orders)
 
     @rx.var
     def filtered_orders(self) -> list[Order]:
@@ -91,5 +105,6 @@ class OrderState(rx.State):
             o | {"status": new_status} if o["id"] == order_id else o
             for o in self.orders
         ]
+        self.orders_storage = json.dumps(self.orders)
         if self.selected_order_id == order_id:
             yield rx.toast(f"Order {order_id} moved to {new_status}")

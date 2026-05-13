@@ -1,6 +1,8 @@
 import reflex as rx
 from typing import TypedDict, Optional
 from faker import Faker
+import json
+import logging
 
 fake = Faker()
 
@@ -22,6 +24,7 @@ class MenuState(rx.State):
     """State for managing the menu items and categories."""
 
     items: list[MenuItem] = []
+    menu_storage: str = rx.LocalStorage(name="cloud_kitchen_menu", sync=True)
     categories: list[str] = [
         "All",
         "Burgers",
@@ -44,6 +47,14 @@ class MenuState(rx.State):
 
     @rx.event
     def setup_menu(self):
+        if self.menu_storage:
+            try:
+                data = json.loads(self.menu_storage)
+                if data:
+                    self.items = data
+                    return
+            except:
+                logging.exception("Unexpected error")
         if len(self.items) > 0:
             return
         sample_names = [
@@ -141,6 +152,7 @@ class MenuState(rx.State):
             }
             for i, (name, cat, price, img_url) in enumerate(sample_names)
         ]
+        self.menu_storage = json.dumps(self.items)
 
     @rx.var
     def filtered_menu(self) -> list[MenuItem]:
@@ -166,6 +178,7 @@ class MenuState(rx.State):
             i | {"available": not i["available"]} if i["id"] == item_id else i
             for i in self.items
         ]
+        self.menu_storage = json.dumps(self.items)
 
     @rx.event
     def open_add_modal(self):
@@ -200,8 +213,10 @@ class MenuState(rx.State):
                 image="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop",
             )
             self.items.append(new_item)
+        self.menu_storage = json.dumps(self.items)
         self.show_item_modal = False
 
     @rx.event
     def delete_item(self, item_id: str):
         self.items = [i for i in self.items if i["id"] != item_id]
+        self.menu_storage = json.dumps(self.items)

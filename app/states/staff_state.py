@@ -2,6 +2,8 @@ import reflex as rx
 from typing import TypedDict
 from faker import Faker
 import random
+import json
+import logging
 
 fake = Faker()
 
@@ -17,6 +19,7 @@ class StaffMember(TypedDict):
 
 class StaffState(rx.State):
     staff: list[StaffMember] = []
+    staff_storage: str = rx.LocalStorage(name="cloud_kitchen_staff", sync=True)
     show_modal: bool = False
     form_data: dict[str, str] = {
         "name": "",
@@ -27,6 +30,14 @@ class StaffState(rx.State):
 
     @rx.event
     def setup_staff(self):
+        if self.staff_storage:
+            try:
+                data = json.loads(self.staff_storage)
+                if data:
+                    self.staff = data
+                    return
+            except:
+                logging.exception("Unexpected error")
         if len(self.staff) > 0:
             return
         roles = ["Admin", "Manager", "Cook", "Server"]
@@ -43,6 +54,7 @@ class StaffState(rx.State):
                     "status": random.choice(["Active", "Off-duty"]),
                 }
             )
+        self.staff_storage = json.dumps(self.staff)
 
     @rx.var
     def total_staff(self) -> int:
@@ -82,4 +94,5 @@ class StaffState(rx.State):
             status="Off-duty",
         )
         self.staff.append(new_staff)
+        self.staff_storage = json.dumps(self.staff)
         self.show_modal = False

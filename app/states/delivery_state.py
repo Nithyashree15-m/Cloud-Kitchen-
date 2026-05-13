@@ -2,6 +2,8 @@ import reflex as rx
 from typing import TypedDict
 from faker import Faker
 import random
+import json
+import logging
 
 fake = Faker()
 
@@ -17,9 +19,20 @@ class Delivery(TypedDict):
 
 class DeliveryState(rx.State):
     deliveries: list[Delivery] = []
+    delivery_storage: str = rx.LocalStorage(
+        name="cloud_kitchen_deliveries", sync=True
+    )
 
     @rx.event
     def setup_deliveries(self):
+        if self.delivery_storage:
+            try:
+                data = json.loads(self.delivery_storage)
+                if data:
+                    self.deliveries = data
+                    return
+            except:
+                logging.exception("Unexpected error")
         if len(self.deliveries) > 0:
             return
         statuses = ["Assigned", "En Route", "Picked Up"]
@@ -37,6 +50,7 @@ class DeliveryState(rx.State):
                     "platform": random.choice(platforms),
                 }
             )
+        self.delivery_storage = json.dumps(self.deliveries)
 
     @rx.var
     def active_deliveries_count(self) -> int:
