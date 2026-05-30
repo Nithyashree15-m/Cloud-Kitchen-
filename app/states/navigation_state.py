@@ -9,7 +9,19 @@ class NavigationState(rx.State):
     def set_active_page(self, page: str):
         self.active_page = page
         self.sidebar_open = False
-        return rx.redirect(f"/{(page.lower() if page != 'Dashboard' else '')}")
+        routes = {
+            "Dashboard": "/",
+            "Orders": "/orders",
+            "Kitchen": "/kitchen",
+            "Menu": "/menu",
+            "Inventory": "/inventory",
+            "Staff": "/staff",
+            "Customers": "/customers",
+            "Delivery": "/delivery",
+            "Billing": "/billing",
+            "Excel Data": "/excel",
+        }
+        return rx.redirect(routes.get(page, "/"))
 
     @rx.event
     def toggle_sidebar(self):

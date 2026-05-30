@@ -45,3 +45,20 @@
 - [x] Add browser local storage persistence to InventoryState, StaffState, CustomerState, DeliveryState, BillingState — same pattern for all states
 - [x] Ensure on_load events check localStorage first before generating sample data
 
+---
+
+## Phase 5: Login and Registration ✅
+
+- [x] Add authentication pages with polished login and registration forms
+- [x] Persist registered users and current session in browser local storage
+- [x] Add logout access from the app header and route users based on session state
+- [x] Protect management pages so unauthenticated users are sent to the login flow
+
+---
+
+## Phase 6: Excel Sheet Data Storage ✅
+
+- [x] Add an Excel data page with export and import actions for operational records
+- [x] Generate a workbook with separate sheets for orders, menu, inventory, staff, customers, deliveries, and billing
+- [x] Support importing an uploaded workbook to restore records into the app state and browser storage
+- [x] Add navigation access and clear user feedback for successful exports/imports and invalid files

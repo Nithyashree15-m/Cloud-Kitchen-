@@ -181,6 +181,10 @@ class MenuState(rx.State):
         self.menu_storage = json.dumps(self.items)
 
     @rx.event
+    def set_show_item_modal(self, value: bool):
+        self.show_item_modal = value
+
+    @rx.event
     def open_add_modal(self):
         self.editing_id = ""
         self.form_data = {

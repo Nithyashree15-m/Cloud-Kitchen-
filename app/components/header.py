@@ -1,6 +1,7 @@
 import reflex as rx
 from app.states.navigation_state import NavigationState
 from app.states.notification_state import NotificationState
+from app.states.auth_state import AuthState
 
 
 def header() -> rx.Component:
@@ -81,13 +82,28 @@ def header() -> rx.Component:
                 class_name="relative",
             ),
             rx.el.div(
+                rx.image(
+                    src=f"https://api.dicebear.com/9.x/notionists/svg?seed={AuthState.current_user_email}",
+                    class_name="h-8 w-8 rounded-full bg-gray-100",
+                ),
                 rx.el.div(
-                    rx.image(
-                        src="https://api.dicebear.com/9.x/notionists/svg?seed=Felix",
-                        class_name="h-8 w-8 rounded-full bg-gray-100",
+                    rx.el.p(
+                        AuthState.current_user_name,
+                        class_name="text-sm font-bold text-gray-900 leading-tight",
                     ),
-                    class_name="ml-4 cursor-pointer hover:ring-2 hover:ring-indigo-100 rounded-full transition-all",
-                )
+                    rx.el.p(
+                        AuthState.current_user_email,
+                        class_name="text-xs text-gray-500 leading-tight",
+                    ),
+                    class_name="hidden md:flex flex-col ml-2",
+                ),
+                rx.el.button(
+                    rx.icon("log-out", class_name="h-4 w-4 mr-1.5"),
+                    rx.el.span("Logout", class_name="text-sm font-semibold"),
+                    on_click=AuthState.logout,
+                    class_name="ml-3 flex items-center px-3 py-1.5 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 transition-all",
+                ),
+                class_name="ml-4 flex items-center",
             ),
             class_name="flex items-center gap-4",
         ),

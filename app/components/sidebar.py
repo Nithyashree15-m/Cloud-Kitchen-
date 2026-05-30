@@ -64,6 +64,7 @@ def sidebar() -> rx.Component:
                     nav_item("Customers", "circle_user_round"),
                     nav_item("Delivery", "truck"),
                     nav_item("Billing", "credit-card"),
+                    nav_item("Excel Data", "file-spreadsheet"),
                     class_name="flex flex-col gap-1",
                 ),
                 class_name="flex-1",
